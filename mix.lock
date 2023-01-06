@@ -1,0 +1,4 @@
+%{
+  "luerl": {:git, "https://github.com/rvirding/luerl.git", "5e61c1838d08430af67fb870995b05a41d64aeee", []},
+  "optimus": {:hex, :optimus, "0.2.0", "3e868b8bedc723d70189cde715df3ef804524c55b26fb33e89cd0f691f50fe80", [:mix], [], "hexpm", "95bcbf228d4ba67283747629087cc3650b10d24390e4ea533b0a64ca278c181c"},
+}
