@@ -41,10 +41,20 @@ defmodule LuerlEx.CLI do
     end)
 
     # Execute the chunk
-    {result, _lua_state} = :luerl.do(chunk, lua_state)
+    {result, lua_state} = :luerl.do(chunk, lua_state)
 
     # Print the result of the script
     IO.puts("result: #{inspect result}")
+
+    # Call Lua to get message we sent
+    {result, lua_state} = :luerl.call_function([:get_lua_msg], [], lua_state)
+    IO.puts("lua was sent the msg: #{inspect result}")
+
+    # Now call lua to set the msg field
+    {_result, lua_state} = :luerl.call_function([:set_lua_msg], ["purple tentacle"], lua_state)
+    # And print the updated one
+    {result, _lua_state} = :luerl.call_function([:get_lua_msg], [], lua_state)
+    IO.puts("lua was update to the msg: #{inspect result}")
   end
 
   # You can ignore the optimus arg parsing. This is just my boilerplate escript
@@ -84,6 +94,14 @@ defmodule LuerlEx.CLI do
   """
   def lua_script() do
     """
+    msg = ""
+    function get_lua_msg()
+      return msg
+    end
+    function set_lua_msg(m)
+      msg = m
+    end
+
     print("Hello Zak")
     my_table = {}
 
@@ -119,7 +137,7 @@ defmodule LuerlEx.CLI do
     print("")
     print("Calling elixir functions")
 
-    s = hello_world("tuna")
+    s = luerlex.hello_world("tuna")
     print("hello_world = "..s)
 
     x, y = echo(10, 3)
@@ -128,19 +146,21 @@ defmodule LuerlEx.CLI do
     r = adder(10, 3)
     print("adder = "..r)
 
-    sleep_for(2)
+    print("Sleeping for 2 seconds...")
+    ns2.sleep_for(2)
 
     print("Going to wait 10 seconds for a message...")
-    msg = wait_for(10)
+    msg = ns2.wait_for(10)
     print("message = "..msg)
 
     print("Done")
 
-    function get_lua_msg()
-      return msg
-    end
-
     return 3, "heads"
+    """
+  end
+
+  def lua_module() do
+    """
     """
   end
 
@@ -153,11 +173,15 @@ defmodule LuerlEx.CLI do
   """
   def lua_function_table() do
     [
-      {[:hello_world], &hello_world/2},
+      {[:luerlex], []},
+      {[:luerlex, :hello_world], &hello_world/2},
+
       {[:adder], &adder/2},
       {[:echo], &echo/2},
-      {[:sleep_for], &sleep_for/2},
-      {[:wait_for], &wait_for/2},
+
+      {[:ns2], []},
+      {[:ns2, :sleep_for], &sleep_for/2},
+      {[:ns2, :wait_for], &wait_for/2},
     ]
   end
 
