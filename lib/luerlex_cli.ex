@@ -47,13 +47,13 @@ defmodule LuerlEx.CLI do
     IO.puts("result: #{inspect result}")
 
     # Call Lua to get message we sent
-    {result, lua_state} = :luerl.call_function([:get_lua_msg], [], lua_state)
+    {result, lua_state} = :luerl.call_function([:Messages, :get_lua_msg], [], lua_state)
     IO.puts("lua was sent the msg: #{inspect result}")
 
     # Now call lua to set the msg field
-    {_result, lua_state} = :luerl.call_function([:set_lua_msg], ["purple tentacle"], lua_state)
+    {_result, lua_state} = :luerl.call_function([:Messages, :set_lua_msg], ["purple tentacle"], lua_state)
     # And print the updated one
-    {result, _lua_state} = :luerl.call_function([:get_lua_msg], [], lua_state)
+    {result, _lua_state} = :luerl.call_function([:Messages, :get_lua_msg], [], lua_state)
     IO.puts("lua was update to the msg: #{inspect result}")
   end
 
@@ -92,13 +92,15 @@ defmodule LuerlEx.CLI do
   @doc """
   This function simply returns the script we want to execute.
   """
+  #how to namespace lua functions?
   def lua_script() do
     """
     msg = ""
-    function get_lua_msg()
+    Messages = Messages or {}
+    function Messages.get_lua_msg()
       return msg
     end
-    function set_lua_msg(m)
+    function Messages.set_lua_msg(m)
       msg = m
     end
 
