@@ -25,4 +25,11 @@ luerlex-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-luerlx
+# Emacs files
+\#*\#
+*~
+
+# MacOS
+.DS_Store
+
+luerlex

@@ -1,6 +1,9 @@
 defmodule LuerlEx.CLI do
   require Logger
 
+  require Record
+  Record.defrecord :erl_func, Record.extract(:erl_func, from: "deps/luerl/src/luerl.hrl")
+
   def main(argv), do: argv |> parse_argv |> process
 
   def process(%Optimus.ParseResult{args: _args, options: _options, flags: flags} = cli_args) do
@@ -17,7 +20,50 @@ defmodule LuerlEx.CLI do
     end
     Logger.info("Configuration: #{inspect cli_args}")
 
-    script = """
+
+    lua_state = :luerl.init()
+    # lua_state =
+    #   for {name, fun} <- lua_function_table() do
+    #     :luerl.set_table(name, fun, lua_state)
+    #   end
+    lua_state = :luerl.set_table(["hello_world"], &hello_world/2, lua_state)
+    {:ok, chunk, lua_state} = :luerl.load(lua_script(), lua_state)
+    {result, _lua_state} = :luerl.do(chunk, lua_state)
+    Logger.info("result: #{inspect result}")
+  end
+
+  def parse_argv(argv) do
+    Optimus.new!(
+      name: "luerlex",
+      description: "Playground for testing luerl from Elixir",
+      version: "0.1",
+      author: "eskil@eskil.org",
+      about: "Playground for testing luerl from Elixir",
+      allow_unknown_args: false,
+      parse_double_dash: true,
+      args: [],
+      flags: [
+        debug: [
+          short: "-d",
+          long: "--debug",
+          help: "Enable debug output",
+          multiple: false
+        ],
+        verbosity: [
+          short: "-v",
+          long: "--verbose",
+          help: "Enable verbose output, repeat for more",
+          multiple: true
+        ]
+      ],
+      options: [
+      ]
+    )
+    |> Optimus.parse!(argv)
+  end
+
+  def lua_script() do
+    """
     print("Hello Zak")
     my_table = {}
 
@@ -50,42 +96,20 @@ defmodule LuerlEx.CLI do
     add_to_my_dict("Chuck", "is a plant.")
     print_dict(my_dict)
 
+    print("Calling elixir functions")
+    s = hello_world("tuna")
+    print("Result = "..s)
+
     return 12, "hello"
     """
-
-    state = :luerl.init()
-    {:ok, chunk, state} = :luerl.load(script, state)
-    {result, _state} = :luerl.do(chunk, state)
-    Logger.info("result: #{inspect result}")
   end
 
-  def parse_argv(argv) do
-    Optimus.new!(
-      name: "luerlex",
-      description: "Playground for testing luerl from Elixir",
-      version: "0.1",
-      author: "eskil@eskil.org",
-      about: "Playground for testing luerl from Elixir",
-      allow_unknown_args: false,
-      parse_double_dash: true,
-      args: [],
-      flags: [
-        debug: [
-          short: "-d",
-          long: "--debug",
-          help: "Enable debug output",
-          multiple: false
-        ],
-        verbosity: [
-          short: "-v",
-          long: "--verbose",
-          help: "Enable verbose output, repeat for more",
-          multiple: true
-        ]
-      ],
-      options: [
-      ]
-    )
-    |> Optimus.parse!(argv)
+  def lua_function_table() do
+    [{"hello_world", &hello_world/2}]
+  end
+
+  def hello_world(str, lua_state) do
+    IO.puts "Hello world and #{str}"
+    {["tuna head"], lua_state}
   end
 end
