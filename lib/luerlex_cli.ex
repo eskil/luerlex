@@ -136,6 +136,10 @@ defmodule LuerlEx.CLI do
 
     print("Done")
 
+    function get_lua_msg()
+      return msg
+    end
+
     return 3, "heads"
     """
   end
@@ -149,11 +153,11 @@ defmodule LuerlEx.CLI do
   """
   def lua_function_table() do
     [
-      {["hello_world"], &hello_world/2},
-      {["adder"], &adder/2},
-      {["echo"], &echo/2},
-      {["sleep_for"], &sleep_for/2},
-      {["wait_for"], &wait_for/2},
+      {[:hello_world], &hello_world/2},
+      {[:adder], &adder/2},
+      {[:echo], &echo/2},
+      {[:sleep_for], &sleep_for/2},
+      {[:wait_for], &wait_for/2},
     ]
   end
 
