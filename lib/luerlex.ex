@@ -21,11 +21,10 @@ defmodule LuerlEx do
 
     # Send a message in 5 seconds to test wait_for
     parent = self()
-    msg = "big whoop"
     spawn(fn ->
       Process.sleep(5000)
       IO.puts("(elixir sends message now)")
-      send(parent, {:msg, msg})
+      send(parent, {:msg, "big whoop"})
     end)
 
     # Execute the chunk
@@ -33,6 +32,9 @@ defmodule LuerlEx do
 
     # Print the result of the script
     IO.puts("lua script returned: #{inspect lua_result}")
+
+    # Check the result is what we expect
+    [3, "heads"] = lua_result
 
     # Occasionally you'll have to call the gc
     lua_state = :luerl.gc(lua_state)
@@ -42,12 +44,18 @@ defmodule LuerlEx do
     {lua_msg, lua_state} = :luerl.call_function([:Messages, :get_lua_msg], [], lua_state)
     IO.puts("lua was sent the msg: #{inspect lua_msg}")
 
+    # Check the message is what we expect (remember that lua returns lists)
+    ["big whoop"] = lua_msg
+
     # Now call lua to set the msg variable in the Messages module.
     {_, lua_state} = :luerl.call_function([:Messages, :set_lua_msg], ["purple tentacle"], lua_state)
 
     # And check we see it.
     {lua_msg, _lua_state} = :luerl.call_function([:Messages, :get_lua_msg], [], lua_state)
     IO.puts("lua was update to the msg: #{inspect lua_msg}")
+
+    # Check the result, again, lua returns lists
+    ["purple tentacle"] = lua_msg
   end
 
   @doc """
