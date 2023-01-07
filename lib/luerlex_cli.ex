@@ -36,6 +36,7 @@ defmodule LuerlEx.CLI do
     parent = self()
     spawn(fn ->
       Process.sleep(5000)
+      IO.puts("(elixir sends message now)")
       send(parent, {:msg, "big whoop"})
     end)
 
