@@ -9,7 +9,7 @@ defmodule LuerlEx.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       escript: [
-        main_module: LuerlEx.CLI,
+        main_module: LuerlEx,
         comment: "A sample escript",
       ],
     ]
@@ -25,7 +25,6 @@ defmodule LuerlEx.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:optimus, "~> 0.2.0"},
       {:luerl, git: "https://github.com/rvirding/luerl.git"}
     ]
   end
