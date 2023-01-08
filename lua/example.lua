@@ -37,6 +37,12 @@ function get_existing_address()
    return address
 end
 
+-- Commented out, but validates that calling get_address via
+-- the mapped pointer does in fact update the global address variable.
+-- m = get_a_map()
+-- f = m["address function"]
+-- f("derp")
+
 -- Just some basic lua actions, create tables, dicts and operate on them
 my_table = {}
 function add_to_my_table(elem)
@@ -88,7 +94,7 @@ print("adder = "..rv)
 -- with elixir processes
 
 print("Sleeping for 2 seconds...")
-Control.sleep_for(2)
+Control.sleep_for(1)
 
 delay = 10
 start_time = os.time()

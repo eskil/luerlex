@@ -12,6 +12,7 @@ defmodule LuerlEx do
     # look in luerl_emul, you'll see it uses luerl_heap:alloc_table
     # and luerl_emul:set_global_key(module, table).
     # But this works in my example, but as a TODO, I should revisit this.
+    # and it's similar to what's described in https://www.lua.org/pil/6.2.html
     lua_state = Enum.reduce(lua_function_table(), lua_state, fn {name, fun}, lua_state ->
       :luerl.set_table(name, fun, lua_state)
     end)
@@ -23,10 +24,10 @@ defmodule LuerlEx do
     lua_script = File.read!(lua_file)
     {:ok, chunk, lua_state} = :luerl.load(lua_script, lua_state)
 
-    # Send a message in 5 seconds to test wait_for
+    # Send a message in 5 seconds to test wait_for later when the lua script calls it.
     parent = self()
     spawn(fn ->
-      Process.sleep(5000)
+      Process.sleep(4000)
       IO.puts("(this is elixir sending a message now)")
       send(parent, {:msg, "big whoop"})
     end)
@@ -40,7 +41,7 @@ defmodule LuerlEx do
     # Check the result is what we expect
     [3, "heads"] = lua_result
 
-    # Occasionally you'll have to call the gc
+    # Occasionally you'll have to call the gc...
     lua_state = :luerl.gc(lua_state)
 
     # Let's see what a complicated lua dictionary/map looks like
@@ -54,8 +55,11 @@ defmodule LuerlEx do
     IO.puts("get_existing_address = #{inspect result}")
 
     # One of the keys is a lua function pointer. Get that and call it
-    # Note: this doesn't take/return a lua state - this is why calls to get_existing_address
-    # don't reflect the change. That could become an issue.
+    # Note: this doesn't take/return a lua state - this is why calls
+    # to get_existing_address don't reflect the change. That could
+    # become an issue. If I call the function via the map in the
+    # example script, it updates the global variable. If I inspect the
+    # Function.info value, the lua state is in the env.
     address_function = lua_map["address function"]
     rvx = address_function.(["Basement"])
     IO.puts("address from #{inspect address_function} is: #{inspect rvx}")
