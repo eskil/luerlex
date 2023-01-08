@@ -77,7 +77,8 @@ defmodule LuerlEx do
       {[:echo], &echo/2},
 
       # Add another namespace (Control) with two functions related
-      # to interacting with elixir threads.
+      # to interacting with elixir threads. The case matters, this module
+      # is called as Control.sleep_for, _not_ control.sleep_for.
       {[:Control], []},
       {[:Control, :sleep_for], &sleep_for/2},
       {[:Control, :wait_for], &wait_for/2},
