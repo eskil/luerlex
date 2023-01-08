@@ -39,6 +39,10 @@ defmodule LuerlEx do
     # Occasionally you'll have to call the gc
     lua_state = :luerl.gc(lua_state)
 
+    # Let's see what a lua dictionary/map looks like
+    {dd, lua_state} = :luerl.call_function([:get_a_map], [], lua_state)
+    IO.puts("get a map from lua: #{inspect dd, pretty: true}")
+
     # Now we'll interact the other way, and call methods in the lua
     # script from elixir. First call Lua to get message we sent earlier earlier.
     {lua_msg, lua_state} = :luerl.call_function([:Messages, :get_lua_msg], [], lua_state)

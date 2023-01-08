@@ -11,6 +11,22 @@ function Messages.set_lua_msg(m)
   Messages.msg = m
 end
 
+-- We call this function and print it just as an example
+-- of what map
+function get_a_map()
+   map = {
+      room = "hallway",
+      actors = {"clock", "plant"},
+      locations = {
+	 green = "second floor",
+	 purple = "sekrit lab",
+      },
+      substate = {"a", "list"},
+   }
+   map["string key"] = "a string value"
+   return map
+end
+
 -- Just some basic lua actions, create tables, dicts and operate on them
 my_table = {}
 function add_to_my_table(elem)
