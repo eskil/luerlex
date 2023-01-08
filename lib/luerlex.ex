@@ -7,7 +7,11 @@ defmodule LuerlEx do
     # Start a lua state that we'll pass around to all lua calls.
     lua_state = :luerl.init()
 
-    # Register some functions that we'll allow lua scripts to call
+    # Register some functions that we'll allow lua scripts to call.
+    # Note: I'm not entirely sure this is the right approach. If you
+    # look in luerl_emul, you'll see it uses luerl_heap:alloc_table
+    # and luerl_emul:set_global_key(module, table).
+    # But this works in my example, but as a TODO, I should revisit this.
     lua_state = Enum.reduce(lua_function_table(), lua_state, fn {name, fun}, lua_state ->
       :luerl.set_table(name, fun, lua_state)
     end)
@@ -48,9 +52,10 @@ defmodule LuerlEx do
 
     {result, lua_state} = :luerl.call_function([:get_existing_address], [], lua_state)
     IO.puts("get_existing_address = #{inspect result}")
+
     # One of the keys is a lua function pointer. Get that and call it
     # Note: this doesn't take/return a lua state - this is why calls to get_existing_address
-    # don't reflect the change
+    # don't reflect the change. That could become an issue.
     address_function = lua_map["address function"]
     rvx = address_function.(["Basement"])
     IO.puts("address from #{inspect address_function} is: #{inspect rvx}")
