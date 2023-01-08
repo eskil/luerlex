@@ -1,4 +1,4 @@
--- Let's start with just a prints
+-- Let's start with just some printing
 print("--------------------------")
 print("Greetings Professor Falken")
 
@@ -65,9 +65,13 @@ print("Sleeping for 2 seconds...")
 Control.sleep_for(2)
 
 delay = 10
-print("Going to wait "..delay.." seconds for a message...")
+start_time = os.time()
+print("Going to wait "..delay.." seconds for a message starting "..os.date(start_time))
 Messages.msg = Control.wait_for(delay)
 print("message = "..Messages.msg)
+end_time = os.time()
+print("Only waited "..os.difftime(end_time, start_time).." seconds")
+
 
 print("Done")
 print("--------------------------")
