@@ -23,8 +23,18 @@ function get_a_map()
       },
       substate = {"a", "list"},
    }
-   map["string key"] = "a string value"
+   map["address function"] = get_address
    return map
+end
+
+-- We can even get a function pointer and call?
+address = "1506 Cemetery Lane"
+function get_address(str)
+   address = "1506 Cemetery Lane, "..str
+   return address
+end
+function get_existing_address()
+   return address
 end
 
 -- Just some basic lua actions, create tables, dicts and operate on them

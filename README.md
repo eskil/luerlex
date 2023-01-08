@@ -16,3 +16,5 @@ This example demonstrates a few key elixir and lua interaction aspects.
 * Setup and call elixir functions from lua
 * Wrap those in "namespaces"
 * Have lua call elixir functions that suspend lua pending elixir process messages
+* Return complex maps from lua to elixir
+* Get lua function pointers and call from elixir

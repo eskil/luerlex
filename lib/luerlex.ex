@@ -39,9 +39,24 @@ defmodule LuerlEx do
     # Occasionally you'll have to call the gc
     lua_state = :luerl.gc(lua_state)
 
-    # Let's see what a lua dictionary/map looks like
-    {dd, lua_state} = :luerl.call_function([:get_a_map], [], lua_state)
-    IO.puts("get a map from lua: #{inspect dd, pretty: true}")
+    # Let's see what a complicated lua dictionary/map looks like
+    {lua_raw, lua_state} = :luerl.call_function([:get_a_map], [], lua_state)
+    IO.puts("raw map from lua: #{inspect lua_raw, pretty: true}")
+    # Lua functions return a list of results, so get the first and convert to a Map
+    lua_map = Map.new(Enum.at(lua_raw, 0))
+    IO.puts("parsed map from lua: #{inspect lua_map, pretty: true}")
+
+    {result, lua_state} = :luerl.call_function([:get_existing_address], [], lua_state)
+    IO.puts("get_existing_address = #{inspect result}")
+    # One of the keys is a lua function pointer. Get that and call it
+    # Note: this doesn't take/return a lua state - this is why calls to get_existing_address
+    # don't reflect the change
+    address_function = lua_map["address function"]
+    rvx = address_function.(["Basement"])
+    IO.puts("address from #{inspect address_function} is: #{inspect rvx}")
+
+    {result, lua_state} = :luerl.call_function([:get_existing_address], [], lua_state)
+    IO.puts("get_existing_address = #{inspect result}")
 
     # Now we'll interact the other way, and call methods in the lua
     # script from elixir. First call Lua to get message we sent earlier earlier.
