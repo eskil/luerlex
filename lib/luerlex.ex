@@ -182,6 +182,15 @@ defmodule LuerlEx do
     {["n1, t1"], lua_state}
   end
 
+  def arg_matching([m1], lua_state) when is_list(m1) do
+    IO.puts "arg matching 1 map #{inspect m1}"
+    m = Keyword.new(m1, fn {k, v} -> {String.to_atom(k), v} end)
+    IO.puts "map is #{inspect m, pretty: true}"
+    rv = m[:action].([])
+    IO.puts inspect rv
+    {["m1"], lua_state}
+  end
+
   @doc """
   Trivial added function, performs an operation on the input
   and returns the result.

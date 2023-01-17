@@ -107,6 +107,11 @@ arg_matching(4, function()
 		  arg_matching("head", "tuna")
                 end)
 print("---")
+arg_matching{number=5,
+	     action=function()
+		arg_matching("head", "tuna")
+             end}
+print("---")
 
 -- The Control module does some more "complex" interacting
 -- This demonstatres how lua scripts can wait for and interact
