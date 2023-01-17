@@ -90,9 +90,23 @@ rv = adder(10, 3)
 print("adder = "..rv)
 
 -- We support argument matching in elixir by looking at the list contents
+print("---")
 arg_matching("tuna")
+print("---")
 arg_matching("tuna", "head")
+print("---")
 arg_matching(1, "car")
+print("---")
+arg_matching(arg_matching, "head")
+print("---")
+arg_matching(2, {"tuna", "head"})
+print("---")
+arg_matching(3, {arg_matching, "tuna", "head"})
+print("---")
+arg_matching(4, function()
+		  arg_matching("head", "tuna")
+                end)
+print("---")
 
 -- The Control module does some more "complex" interacting
 -- This demonstatres how lua scripts can wait for and interact

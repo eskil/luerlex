@@ -51,6 +51,7 @@ defmodule LuerlEx do
     lua_map = Map.new(Enum.at(lua_raw, 0))
     IO.puts("parsed map from lua: #{inspect lua_map, pretty: true}")
 
+    # Call get existing address
     {result, lua_state} = :luerl.call_function([:get_existing_address], [], lua_state)
     IO.puts("get_existing_address = #{inspect result}")
 
@@ -148,18 +149,37 @@ defmodule LuerlEx do
   Argument matching on the list of args
   """
   def arg_matching([s], lua_state) when is_binary(s) do
-    IO.puts "arg matching on a string"
-    {[], lua_state}
+    IO.puts "arg matching on a string: #{s}"
+    {["s"], lua_state}
+  end
+
+  def arg_matching([f1, s1], lua_state) when is_function(f1) and is_binary(s1) do
+    IO.puts "arg matching 1 function 1 string, #{inspect f1}, #{s1}"
+    {rv, lua_state} = f1.([s1], lua_state)
+    IO.puts inspect rv
+    {["f1, s1"], lua_state}
   end
 
   def arg_matching([s1, s2], lua_state) when is_binary(s1) and is_binary(s2) do
-    IO.puts "arg matching two strings"
-    {[], lua_state}
+    IO.puts "arg matching two strings, #{s1}, #{s2}"
+    {["s1, s2"], lua_state}
   end
 
   def arg_matching([n1, s1], lua_state) when is_integer(n1) and is_binary(s1) do
-    IO.puts "arg matching 1 number 1 string"
-    {[], lua_state}
+    IO.puts "arg matching 1 number 1 string, #{n1}, #{s1}"
+    {["n1, s1"], lua_state}
+  end
+
+  def arg_matching([n1, f1], lua_state) when is_integer(n1) and is_function(f1) do
+    IO.puts "arg matching 1 number 1 function #{inspect f1}"
+    rv = f1.([])
+    IO.puts inspect rv
+    {["n1, f1"], lua_state}
+  end
+
+  def arg_matching([n1, t1], lua_state) when is_integer(n1) do
+    IO.puts "arg matching 1 number 1 thing #{inspect t1}"
+    {["n1, t1"], lua_state}
   end
 
   @doc """
