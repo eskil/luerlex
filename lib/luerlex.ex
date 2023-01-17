@@ -103,6 +103,7 @@ defmodule LuerlEx do
       # Add two functions to the global namespace
       {[:adder], &adder/2},
       {[:echo], &echo/2},
+      {[:arg_matching], &arg_matching/2},
 
       # Add another namespace (Control) with two functions related
       # to interacting with elixir threads. The case matters, this module
@@ -141,6 +142,24 @@ defmodule LuerlEx do
   """
   def echo(args, lua_state) do
     {args, lua_state}
+  end
+
+  @doc """
+  Argument matching on the list of args
+  """
+  def arg_matching([s], lua_state) when is_binary(s) do
+    IO.puts "arg matching on a string"
+    {[], lua_state}
+  end
+
+  def arg_matching([s1, s2], lua_state) when is_binary(s1) and is_binary(s2) do
+    IO.puts "arg matching two strings"
+    {[], lua_state}
+  end
+
+  def arg_matching([n1, s1], lua_state) when is_integer(n1) and is_binary(s1) do
+    IO.puts "arg matching 1 number 1 string"
+    {[], lua_state}
   end
 
   @doc """
